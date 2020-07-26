@@ -37,6 +37,7 @@ parser.add_argument('--temp', default=0.7, type=float, help='temperature of samp
 parser.add_argument('--n_sample', default=20, type=int, help='number of samples')
 parser.add_argument('path', metavar='PATH', type=str, help='Path to image directory')
 parser.add_argument('--w', default=None, type=str, help='Path to saved weights')
+parser.add_argument('--wo', default=None, type=str, help='Path to saved optmizer')
 parser.add_argument('--start-iter', default=0, type=int, help='start iteration')
 
 
@@ -107,6 +108,8 @@ def train(args, model, optimizer):
         z_sample.append(z_new.to(device))
     if args.w:
         model.load_state_dict(torch.load(args.w))
+    if args.wo:
+        optimizer.load_state_dict(torch.load(args.wo))
     if args.start_iter != 0:
         _range = range(args.start_iter, args.iter)
     else:

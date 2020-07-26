@@ -36,6 +36,8 @@ parser.add_argument('--img_size', default=64, type=int, help='image size')
 parser.add_argument('--temp', default=0.7, type=float, help='temperature of sampling')
 parser.add_argument('--n_sample', default=20, type=int, help='number of samples')
 parser.add_argument('path', metavar='PATH', type=str, help='Path to image directory')
+parser.add_argument('--w', default=None, type=str, help='Path to saved weights')
+parser.add_argument('--start-iter', default=0, type=int, help='start iteration')
 
 
 def sample_data(path, batch_size, image_size):
@@ -103,8 +105,13 @@ def train(args, model, optimizer):
     for z in z_shapes:
         z_new = torch.randn(args.n_sample, *z) * args.temp
         z_sample.append(z_new.to(device))
-
-    with tqdm(range(args.iter)) as pbar:
+    if args.w:
+        model.load_state_dict(torch.load(args.w))
+    if args.start_iter != 0:
+        _range = range(args.start_iter, args.iter)
+    else:
+        _range = range(args.iter)
+    with tqdm(_range) as pbar:
         for i in pbar:
             image, _ = next(dataset)
             image = image.to(device)

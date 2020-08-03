@@ -39,7 +39,7 @@ parser.add_argument('path', metavar='PATH', type=str, help='Path to image direct
 parser.add_argument('--w', default=None, type=str, help='Path to saved weights')
 parser.add_argument('--wo', default=None, type=str, help='Path to saved optmizer')
 parser.add_argument('--start-iter', default=0, type=int, help='start iteration')
-
+parser.add_argument('--save-weight', default=None, type=str, help='Path to save the weights')
 
 def sample_data(path, batch_size, image_size):
     transform = transforms.Compose(
@@ -153,11 +153,15 @@ def train(args, model, optimizer):
                     )
 
             if i % 10000 == 0:
+                if (args.save_weight):
+                    save_path = args.save_weight
+                else:
+                    save_path = 'checkpoint'
                 torch.save(
-                    model.state_dict(), f'checkpoint/model_{str(i + 1).zfill(6)}.pt'
+                    model.state_dict(), f'{save_path}/model_{str(i + 1).zfill(6)}.pt'
                 )
                 torch.save(
-                    optimizer.state_dict(), f'checkpoint/optim_{str(i + 1).zfill(6)}.pt'
+                    optimizer.state_dict(), f'{save_path}/optim_{str(i + 1).zfill(6)}.pt'
                 )
 
 

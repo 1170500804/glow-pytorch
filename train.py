@@ -40,6 +40,8 @@ parser.add_argument('--w', default=None, type=str, help='Path to saved weights')
 parser.add_argument('--wo', default=None, type=str, help='Path to saved optmizer')
 parser.add_argument('--start-iter', default=0, type=int, help='start iteration')
 parser.add_argument('--save-weight', default=None, type=str, help='Path to save the weights')
+parser.add_argument('--eval', action='store_true', help='whether is evaluation mode')
+parser.add_argument('--sample', default=None, type=str, help='Path to the saved sample img')
 
 def sample_data(path, batch_size, image_size):
     transform = transforms.Compose(
@@ -143,10 +145,14 @@ def train(args, model, optimizer):
             )
 
             if i % 100 == 0:
+                if (args.sample):
+                    sample_path = args.sample
+                else:
+                    sample_path = 'sample'
                 with torch.no_grad():
                     utils.save_image(
                         model_single.reverse(z_sample).cpu().data,
-                        f'sample/{str(i + 1).zfill(6)}.png',
+                        f'{sample_path}/{str(i + 1).zfill(6)}.png',
                         normalize=True,
                         nrow=10,
                         range=(-0.5, 0.5),
@@ -176,6 +182,8 @@ if __name__ == '__main__':
     # model = model_single
     model = model.to(device)
 
+
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     train(args, model, optimizer)
+
